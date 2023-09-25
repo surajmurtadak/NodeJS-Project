@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const router = require("./routes");
+const userRouter = require("./routes/user");
+const offerRouter = require("./routes/offer");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
@@ -16,6 +17,7 @@ mongoose
 
 
 app.use(bodyParser.urlencoded({extended:true}));
-app.use("/",router);
+app.use("/user",userRouter);
+app.use("/offer",offerRouter);
 
 app.listen(4000,()=>console.log("server running on port 4000"));

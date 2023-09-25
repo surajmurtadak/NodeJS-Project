@@ -1,19 +1,12 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-//user data
-const userSchema = new mongoose.Schema({
-    name : String,
-    password : String,
-    gender : String,
-    mobileNumber : Number,
-    address : String,
-    pincode: Number,
-    role:String
-});
-const userCol = new mongoose.model("userCol",userSchema);
-
-//offer data
+//offer schema
 const offerSchema = new mongoose.Schema({
+    offerId: {
+        type:String,
+        unique: true,
+        required: true
+    },
     title: {
         type:String,
         required: true
@@ -30,7 +23,7 @@ const offerSchema = new mongoose.Schema({
         type:Number,
         required: true
     },
-    pointesPerOffer: {
+    pointsPerOffer: {
         type:Number,
         required: true
     },
@@ -39,6 +32,4 @@ const offerSchema = new mongoose.Schema({
         required: true
     }
 });
-const offer = new mongoose.model("offer",offerSchema);
-
-module.exports = {userCol, offer};
+module.exports.offer = new mongoose.model("offer",offerSchema);
