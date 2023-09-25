@@ -46,8 +46,8 @@ module.exports.updateOfferController = async (req, res) => {
   const offerId = req.params.offerid;
   const newData = req.body;
   const currentUser = req.authData._doc;
-  if (currentUser.role === "admin") {
-    try {
+  try {
+    if (currentUser.role === "admin") {
       const updatedOffer = await offer.findOneAndUpdate(
         { offerId },
         { $set: { ...newData } },
@@ -57,14 +57,15 @@ module.exports.updateOfferController = async (req, res) => {
       if (!updatedOffer) {
         res.status(404).json({ message: " offer not found" });
       }
-
-      res.json({ updatedOffer });
-    } catch (err) {
-      res.status(500).json({ message: `Enternal server error : ${err}` });
+      else{
+        res.json({ updatedOffer });
+      }
+    } else {
+      res
+        .status(401)
+        .json({ message: " You are not authorised to update offer." });
     }
-  } else {
-    res
-      .status(401)
-      .json({ message: " You are not authorised to update offer." });
+  } catch (err) {
+    res.status(500).json({ message: `Enternal server error : ${err}` });
   }
 };
