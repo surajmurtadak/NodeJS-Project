@@ -2,6 +2,7 @@ const {userCol} = require("../models/user");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const multer = require("multer");
 const saltRounds = Number(process.env.SALT_ROUNDS);
 
 //API for signup route 
@@ -154,3 +155,55 @@ module.exports.getTwoUserController = (req,res)=>{
     res.send(userData);
 };
 
+// Upload profile picture.
+
+const storage = multer.diskStorage({
+    destination: "./uploads",
+    filename : (req,file,callback)=>{
+        return callback(null,`${Date.now()}-${file.originalname}`);
+    }
+});
+
+module.exports.upload = multer({ storage, limits : { fileSize: 10*1024*1024 }});
+
+module.exports.uploadPictureController = async(req, res, next) => {
+
+    try{
+
+        const imageURL = `/uploads/${req.file.filename}`;
+        const currentUser = req.authData._doc;
+
+        const updatedUser = await userCol.findOneAndUpdate(
+            {username:currentUser.username},
+            {$set:{profilePicture:imageURL}},
+            {new : true}
+        );
+
+        if(updatedUser){
+            res.json({
+                message: "profile picture uploaded.",
+                data : updatedUser
+            });
+        }
+        else{
+            res.status(404).json({message: "user not found"});
+        }   
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({message:`Server Error : ${err}`});
+    }
+}
+
+// get profile picture of current logged in user( if available).
+
+module.exports.getProfilePicture = (req,res) =>{
+    const currentUser = req.authData._doc;
+    if(currentUser.profilePicture){
+        res.send(`http://localhost:4000${currentUser.profilePicture}`);
+    }
+    else{
+        res.status(404).json({message:"profile picture not found."});
+    }
+    
+}

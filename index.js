@@ -15,7 +15,7 @@ mongoose
     console.log("Mongo connection error: ",err);
 });
 
-
+app.use("/uploads",express.static("./uploads"));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use("/user",userRouter);
 app.use("/offer",offerRouter);

@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum: ['employee', 'admin'],
         required: true
+    },
+    profilePicture:{
+        type: String
     }
 });
 module.exports.userCol = new mongoose.model("userCol",userSchema);
